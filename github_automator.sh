@@ -2,14 +2,19 @@
 location="./"
 dir='~/'
 initRepo(){
-    local username="$1"
-            read -p "Enter your repo name :-" repoName
+            local username="$1"
+            read -p "Enter your repo name (with ending with .sukh):-" repoName
+            while ! [[ "$repoName" =~ .sukh$ ]]
+            do
+                echo "invalid format"
+                read -p "Enter your repo name (with ending with .sukh):-" repoName
+            done
             read -p "enter description file name: " description
 
             PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
             if [ -z "$PERSONAL_ACCESS_TOKEN" ]; then
             echo "Please enter your Personal access token from Git-Hub"
-            read  PERSONAL_ACCESS_TOKEN 
+            read  -s PERSONAL_ACCESS_TOKEN 
             export GITHUB_TOKEN=$PERSONAL_ACCESS_TOKEN
             fi 
            
@@ -36,17 +41,18 @@ initRepo(){
             then
             echo "Repository already exists :("
             initRepo
-            fi
-            git add .
-            git remote add origin "git@github.com:$username/$repoName.git"
+            
+            else
+                git add .
+                git remote add origin "git@github.com:$username/$repoName.git"
 
-            git commit . -m "1st commit"
-            git branch -m master main
+                git commit . -m "1st commit"
+                git branch -m master main
 
-            git push origin main
+                git push origin main
 
+           fi
 }
-
 pushRepo(){
    
     echo "Enter the location of Directory You Want to commit ( Press Enter To commit Current Directory ) "
