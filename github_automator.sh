@@ -9,7 +9,7 @@ initRepo(){
             PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
             if [ -z "$PERSONAL_ACCESS_TOKEN" ]; then
             echo "Please enter your Personal access token from Git-Hub"
-            read -sr PERSONAL_ACCESS_TOKEN 
+            read  PERSONAL_ACCESS_TOKEN 
             export GITHUB_TOKEN=$PERSONAL_ACCESS_TOKEN
             fi 
            
@@ -28,11 +28,14 @@ initRepo(){
             git init 
             touch readme.md
             echo "# You Are Using GitHub_Automator  Credit :- sukhman-sukh " >> readme.md
-            EXISTING_REPO =  curl -L -X POST -H "Authorization: Bearer $PERSONAL_ACCESS_TOKEN" https://api.github.com/user/repos -d "{\"name\":\"$repoName\",\"description\":\"$description\"}" > /dev/null
-                       
-            if [ "$EXISTING_REPO" = "200" ]; then
-                echo "Repository already exists. Enter a different name"
-                initRepo
+            # curl -L -X POST -H "Authorization: Bearer $PERSONAL_ACCESS_TOKEN" https://api.github.com/user/repos -d "{\"name\":\"$repo_name\",\"description\":\"$description\"}" > /dev/null
+            
+            response=$( curl -L -X POST -H "Authorization: Bearer $PERSONAL_ACCESS_TOKEN" https://api.github.com/user/repos -d "{\"name\":\"$repoName\",\"description\":\"$description\"}" )
+
+            if [[ "$response" =~ ^.*message\":\ \"name\ already\ exists\ on\ this\ account.*$ ]]
+            then
+            echo "Repository already exists :("
+            initRepo
             fi
             git add .
             git remote add origin "git@github.com:$username/$repoName.git"
@@ -68,7 +71,13 @@ pushRepo(){
 main(){
     echo "Hey There ! "
     echo "This Is A Git-Hub Repo Automator App"
+    
+
+    username=$GIT_USERNAME
+    if [ -z "$GIT_USERNAME" ]; then
     read -p "enter username: " username
+    export GIT_USERNAME=$username
+    fi 
     
     
     echo ''
