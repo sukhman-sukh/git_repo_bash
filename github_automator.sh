@@ -1,5 +1,6 @@
 #!/bin/bash
-
+location="./"
+dir='~/'
 initRepo(){
     local username="$1"
             read -p "Enter your repo name :-" repoName
@@ -44,22 +45,23 @@ initRepo(){
 }
 
 pushRepo(){
-    
+   
     echo "Enter the location of Directory You Want to commit ( Press Enter To commit Current Directory ) "
-    read -p " Enter absolute path :- cd ~/" location
+     
+        read -p " Enter absolute path :- cd ~/" location
     if [  "$location" != ""  ]
     then
         cd ~/
         cd $location
         pwd
     fi
-    read -p "Commit Message :- " message
-    git add .
-    
-    git commit . -m "$message"
-    git branch -m master main
-    git push origin main
+        read -p "Commit Message :- " message
+        git add .
 
+        git commit . -m "$message"
+        git branch -m master main
+        git push origin main
+    
 
 }
 
